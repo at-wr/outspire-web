@@ -135,6 +135,20 @@ import Button from '../components/Button.astro';
         <div class="w-full max-w-3xl space-y-4">
           <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
             <h3 class="text-xl font-bold mb-4 text-center">Supported URL Schemes</h3>
+            
+            <!-- WeChat warning - hidden by default, shown with JavaScript -->
+            <div id="urlSchemeWarning" class="hidden mb-4 p-3 rounded-md bg-blue-50 border border-blue-100 text-sm">
+              <p class="font-medium flex items-center gap-1 text-blue-800">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                Using WeChat?
+              </p>
+              <p class="mt-1 text-slate-700">For these links to work, you'll need to open them in Safari first.</p>
+            </div>
+            
             <div class="grid gap-6 md:grid-cols-2">
               <div class="flex flex-col items-center space-y-2">
                 <h4 class="font-medium">Today View</h4>
@@ -189,6 +203,26 @@ import Button from '../components/Button.astro';
     </div>
   </section>
 </MainLayout>
+
+<script>
+  // Detect WeChat or in-app browser
+  document.addEventListener('DOMContentLoaded', () => {
+    const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+    const isInAppBrowser = isWeChat || 
+      /Line\//i.test(navigator.userAgent) || 
+      /FBAN|FBAV/i.test(navigator.userAgent) || 
+      /QQ\//i.test(navigator.userAgent) ||
+      /Instagram/i.test(navigator.userAgent) ||
+      /Weibo/i.test(navigator.userAgent);
+    
+    const urlSchemeWarning = document.getElementById('urlSchemeWarning');
+    
+    // Only show the warning if currently in WeChat or another in-app browser
+    if ((isWeChat || isInAppBrowser) && urlSchemeWarning) {
+      urlSchemeWarning.classList.remove('hidden');
+    }
+  });
+</script>
 
 <style>
   /* Add subtle animation for cards */

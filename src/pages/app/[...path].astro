@@ -23,40 +23,43 @@ const deepLink = createDeepLink(fullPath as any);
       </div>
       
       <!-- WeChat specific guide (hidden by default) -->
-      <div id="wechatGuide" class="hidden rounded-lg border-2 border-yellow-400 bg-yellow-50 p-4 text-sm text-slate-800">
+      <div id="wechatGuide" class="hidden rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-slate-800">
         <div class="flex items-center gap-2 mb-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-600">
-            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
-          <p class="font-bold text-base">Hmm... am I in WeChat?</p>
-          </div>
-          <p class="mb-3">WeChat blocks opening apps. Please follow these steps:</p>
+          <p class="font-medium text-base">Opening from WeChat</p>
         </div>
-        <div class="flex flex-col items-start gap-3 mb-3">
+        <p class="mb-3">Only one step ahead...!</p>
+        <div class="flex flex-col items-start gap-2 mb-3">
           <div class="flex items-center gap-2">
-            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-xs font-bold">1</div>
-            <p>Tap the "..." button in the top right corner</p>
+            <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-medium">1</div>
+            <p>Tap the "..." in the top corner</p>
           </div>
           <div class="flex items-center gap-2">
-            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-xs font-bold">2</div>
-            <p>Select "Open in browser"</p>
+            <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-medium">2</div>
+            <p>Select "Open in Safari/Browser"</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-medium">3</div>
+            <p>Then tap "Open in App" button</p>
           </div>
         </div>
       </div>
 
       <!-- In-app browser warning (hidden by default) -->
-      <div id="inAppBrowserGuide" class="hidden rounded-lg border-2 border-blue-300 bg-blue-50 p-4 text-sm text-slate-800">
+      <div id="inAppBrowserGuide" class="hidden rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-slate-800">
         <div class="flex items-center gap-2 mb-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
             <circle cx="12" cy="12" r="10"/>
             <line x1="12" y1="8" x2="12" y2="12"/>
             <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
-          <p class="font-bold text-base">In-App Browser Detected</p>
+          <p class="font-medium text-base">Quick Tip</p>
         </div>
-        <p class="mb-2">Some in-app browsers block opening apps. For best results, open this link in Safari.</p>
+        <p class="mb-2">For the best experience, we recommend opening this in your device's default browser (Safari/Chrome).</p>
       </div>
 
       <div class="flex flex-col items-center justify-center space-y-4">
@@ -111,17 +114,39 @@ const deepLink = createDeepLink(fullPath as any);
 </MainLayout>
 
 <script>
+  // Store WeChat status in session storage to remember across page loads
+  // But clear it when checking again
+  const checkIsWeChat = () => {
+    const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+    // If we're not in WeChat anymore, clear the flag
+    if (!isWeChat) {
+      sessionStorage.removeItem('was_in_wechat');
+      return false;
+    }
+    
+    // If we are in WeChat, set the flag
+    sessionStorage.setItem('was_in_wechat', 'true');
+    return true;
+  };
+  
+  // This helps us know if the user was previously in WeChat but is now in Safari
+  const wasInWeChat = () => {
+    return sessionStorage.getItem('was_in_wechat') === 'true';
+  };
+
   // Platform detection
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
   const isAndroid = /Android/.test(navigator.userAgent);
   const isMobile = isIOS || isAndroid;
-  const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
-  const isInAppBrowser = isWeChat || 
-    /Line\//i.test(navigator.userAgent) || 
-    /FBAN|FBAV/i.test(navigator.userAgent) || 
-    /QQ\//i.test(navigator.userAgent) ||
-    /Instagram/i.test(navigator.userAgent) ||
-    /Weibo/i.test(navigator.userAgent);
+  const isWeChat = checkIsWeChat();
+  const isInAppBrowser = 
+    (!isWeChat && ( // Only check these if not already identified as WeChat
+      /Line\//i.test(navigator.userAgent) || 
+      /FBAN|FBAV/i.test(navigator.userAgent) || 
+      /QQ\//i.test(navigator.userAgent) ||
+      /Instagram/i.test(navigator.userAgent) ||
+      /Weibo/i.test(navigator.userAgent)
+    ));
   
   // Show appropriate help text based on platform
   document.addEventListener('DOMContentLoaded', () => {
@@ -131,10 +156,18 @@ const deepLink = createDeepLink(fullPath as any);
     const desktopHelp = document.getElementById('desktopHelp');
     const wechatGuide = document.getElementById('wechatGuide');
     const inAppBrowserGuide = document.getElementById('inAppBrowserGuide');
+    const openAppBtn = document.getElementById('openAppBtn');
     
-    // Show WeChat guide if in WeChat
+    // Only show WeChat guide if currently in WeChat (not if previously in WeChat)
     if (isWeChat && wechatGuide) {
       wechatGuide.classList.remove('hidden');
+      // Make the button less prominent in WeChat since it won't work directly
+      if (openAppBtn) {
+        openAppBtn.classList.add('bg-slate-700');
+        openAppBtn.classList.add('hover:bg-slate-800');
+        openAppBtn.classList.remove('bg-slate-900');
+        openAppBtn.classList.remove('hover:bg-slate-900/90');
+      }
     } 
     // Show in-app browser guide if in another in-app browser
     else if (isInAppBrowser && inAppBrowserGuide) {
@@ -148,7 +181,7 @@ const deepLink = createDeepLink(fullPath as any);
         iosHelp.classList.remove('hidden');
       } else if (isAndroid && androidHelp) {
         androidHelp.classList.remove('hidden');
-      } else if (desktopHelp) {
+      } else if (!isMobile && desktopHelp) {
         desktopHelp.classList.remove('hidden');
       }
     }
