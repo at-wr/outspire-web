@@ -1,6 +1,6 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
-import { handleUniversalLink, getPathDescription } from '../../lib/deeplink';
+import { createDeepLink, getPathDescription, APP_STORE_URL } from '../../lib/deeplink';
 
 // Tell Astro to render this page on the server (not at build time)
 export const prerender = false;
@@ -9,46 +9,97 @@ export const prerender = false;
 const { path } = Astro.params;
 const fullPath = path || '';
 const pathDescription = getPathDescription(fullPath);
+const deepLink = createDeepLink(fullPath as any);
 ---
 
 <MainLayout title={pathDescription}>
   <section class="container mx-auto max-w-7xl px-4 py-12 md:py-24">
     <div class="mx-auto max-w-md space-y-6 text-center">
       <div class="space-y-2">
-        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Opening Outspire</h1>
+        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Open Outspire</h1>
         <p class="text-slate-600">
-          Redirecting you to <span class="font-medium">{pathDescription}</span>
+          Ready to open <span class="font-medium">{pathDescription}</span> in the Outspire app
         </p>
       </div>
 
-      <div class="flex justify-center">
-        <div class="relative h-12 w-12">
-          <div class="absolute h-12 w-12 rounded-full border-4 border-slate-200"></div>
-          <div class="absolute h-12 w-12 animate-spin rounded-full border-4 border-transparent border-t-slate-900"></div>
-        </div>
+      <div class="flex flex-col items-center justify-center space-y-4">
+        <!-- Primary action button -->
+        <a 
+          href={deepLink}
+          id="openAppBtn"
+          class="inline-flex h-12 w-full max-w-xs items-center justify-center rounded-md bg-slate-900 px-8 text-sm font-medium text-white shadow transition-colors hover:bg-slate-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950"
+        >
+          Open in App
+        </a>
+        
+        <p class="text-sm text-slate-500">Tap the button above to open the app</p>
       </div>
       
       <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-        <p>If nothing happens, you may not have Outspire installed.</p>
+        <p>If the app doesn't open, you may not have Outspire installed.</p>
         <p class="mt-2">
           <a 
-            href="https://apps.apple.com/app/outspire/id0000000000" 
+            href={APP_STORE_URL}
             class="text-slate-900 font-medium underline underline-offset-4 hover:text-slate-700"
           >
             Download Outspire on the App Store
           </a>
         </p>
       </div>
+      
+      <div id="platformSpecificHelp" class="hidden rounded-lg border border-slate-200 bg-blue-50 p-4 text-sm text-slate-800">
+        <p class="font-medium">Need help?</p>
+        <div id="iosHelp" class="hidden mt-2">
+          <p>On iOS, you might need to:</p>
+          <ul class="list-disc list-inside mt-1 space-y-1">
+            <li>Open this page in Safari (not in-app browsers)</li>
+            <li>Allow Outspire to open when prompted</li>
+          </ul>
+        </div>
+        <div id="androidHelp" class="hidden mt-2">
+          <p>On Android, you might need to:</p>
+          <ul class="list-disc list-inside mt-1 space-y-1">
+            <li>Select "Open with Outspire" when prompted</li>
+            <li>Allow Outspire to open URL schemes in settings</li>
+          </ul>
+        </div>
+        <div id="desktopHelp" class="hidden mt-2">
+          <p>On desktop browsers, app URLs typically don't work.</p>
+          <p class="mt-1">Please use your mobile device to open this link.</p>
+        </div>
+      </div>
     </div>
   </section>
 </MainLayout>
 
-<script define:vars={{ path: fullPath }}>
-  // Try to launch the app when page loads
+<script>
+  // Platform detection
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+  const isAndroid = /Android/.test(navigator.userAgent);
+  const isMobile = isIOS || isAndroid;
+  
+  // Show appropriate help text based on platform
   document.addEventListener('DOMContentLoaded', () => {
-    // Import the utility functions
-    import('../../lib/deeplink.ts').then(({ handleUniversalLink }) => {
-      handleUniversalLink(path);
-    });
+    const platformHelp = document.getElementById('platformSpecificHelp');
+    const iosHelp = document.getElementById('iosHelp');
+    const androidHelp = document.getElementById('androidHelp');
+    const desktopHelp = document.getElementById('desktopHelp');
+    
+    if (platformHelp) {
+      platformHelp.classList.remove('hidden');
+      
+      if (isIOS && iosHelp) {
+        iosHelp.classList.remove('hidden');
+      } else if (isAndroid && androidHelp) {
+        androidHelp.classList.remove('hidden');
+      } else if (desktopHelp) {
+        desktopHelp.classList.remove('hidden');
+      }
+    }
+    
+    // Add a fallback timer to show help after a delay
+    setTimeout(() => {
+      if (platformHelp) platformHelp.classList.remove('hidden');
+    }, 2000);
   });
 </script>

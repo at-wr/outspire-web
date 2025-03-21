@@ -7,31 +7,36 @@ export type DeepLinkPath =
   | `club/${string}`
   | `addactivity/${string}`;
 
-export function isAppInstalled(): Promise<boolean> {
-  return new Promise((resolve) => {
-    // Set a timeout for the redirect attempt
-    const timeout = setTimeout(() => {
-      // If we hit the timeout, the app is likely not installed
-      resolve(false);
-    }, 500);
-    
-    // Try to detect if browser switched to the app
-    window.addEventListener('blur', () => {
-      clearTimeout(timeout);
-      resolve(true);
-    }, { once: true });
-    
-    // Try to open the app with a simple deep link
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = APP_SCHEME;
-    document.body.appendChild(iframe);
-    
-    // Clean up after attempt
-    setTimeout(() => {
-      document.body.removeChild(iframe);
-    }, 100);
-  });
+// Detect iOS devices
+export function isIOS(): boolean {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+}
+
+// Detect Android devices
+export function isAndroid(): boolean {
+  return /Android/.test(navigator.userAgent);
+}
+
+// More reliable app installation check - but requires user interaction
+export function openApp(urlScheme: string): void {
+  // Detecting if the app opens successfully is difficult and unreliable
+  // Best approach is to try opening and provide clear fallback instructions
+  
+  // For iOS devices
+  if (isIOS()) {
+    // Create and use a link element approach which works better on iOS
+    const link = document.createElement('a');
+    link.setAttribute('href', urlScheme);
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } 
+  // For Android and other devices
+  else {
+    // Direct location change works better for Android
+    window.location.href = urlScheme;
+  }
 }
 
 export function createDeepLink(path: DeepLinkPath): string {
@@ -43,21 +48,9 @@ export function createUniversalLink(path: DeepLinkPath): string {
 }
 
 export function handleUniversalLink(path: string): void {
-  // First check if the app is installed
-  isAppInstalled().then((installed) => {
-    if (installed) {
-      // If installed, try to open with URL scheme
-      window.location.href = createDeepLink(path as DeepLinkPath);
-      
-      // If still on page after timeout, fall back to App Store
-      setTimeout(() => {
-        window.location.href = APP_STORE_URL;
-      }, 1000);
-    } else {
-      // If not installed, go to App Store
-      window.location.href = APP_STORE_URL;
-    }
-  });
+  // This function will be called from the page
+  // We'll implement a user-initiated approach instead of automatic opening
+  // The UI in the page will handle showing the right buttons/options
 }
 
 // Function to extract human-readable description from path
