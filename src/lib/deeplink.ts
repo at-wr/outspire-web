@@ -1,4 +1,5 @@
 export const APP_STORE_URL = 'https://apps.apple.com/app/outspire/id0000000000';
+export const AFDIAN_URL = 'https://afdian.com/item/8ea3c1a8062011f0b76c52540025c377';
 export const APP_SCHEME = 'outspire://';
 
 export type DeepLinkPath = 
@@ -15,6 +16,22 @@ export function isIOS(): boolean {
 // Detect Android devices
 export function isAndroid(): boolean {
   return /Android/.test(navigator.userAgent);
+}
+
+// Detect WeChat browser
+export function isWeChat(): boolean {
+  return /MicroMessenger/i.test(navigator.userAgent);
+}
+
+// Detect if browser is an in-app browser that might block URL schemes
+export function isInAppBrowser(): boolean {
+  const ua = navigator.userAgent;
+  return isWeChat() || 
+    /Line\//i.test(ua) || 
+    /FBAN|FBAV/i.test(ua) || // Facebook
+    /QQ\//i.test(ua) ||
+    /Instagram/i.test(ua) ||
+    /Weibo/i.test(ua);
 }
 
 // More reliable app installation check - but requires user interaction

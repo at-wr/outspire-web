@@ -1,6 +1,6 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
-import { createDeepLink, getPathDescription, APP_STORE_URL } from '../../lib/deeplink';
+import { createDeepLink, getPathDescription, APP_STORE_URL, AFDIAN_URL } from '../../lib/deeplink';
 
 // Tell Astro to render this page on the server (not at build time)
 export const prerender = false;
@@ -16,10 +16,47 @@ const deepLink = createDeepLink(fullPath as any);
   <section class="container mx-auto max-w-7xl px-4 py-12 md:py-24">
     <div class="mx-auto max-w-md space-y-6 text-center">
       <div class="space-y-2">
-        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Open Outspire</h1>
+        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Quick Actions</h1>
         <p class="text-slate-600">
           Ready to open <span class="font-medium">{pathDescription}</span> in the Outspire app
         </p>
+      </div>
+      
+      <!-- WeChat specific guide (hidden by default) -->
+      <div id="wechatGuide" class="hidden rounded-lg border-2 border-yellow-400 bg-yellow-50 p-4 text-sm text-slate-800">
+        <div class="flex items-center gap-2 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-600">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <p class="font-bold text-base">Hmm... am I in WeChat?</p>
+          </div>
+          <p class="mb-3">WeChat blocks opening apps. Please follow these steps:</p>
+        </div>
+        <div class="flex flex-col items-start gap-3 mb-3">
+          <div class="flex items-center gap-2">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-xs font-bold">1</div>
+            <p>Tap the "..." button in the top right corner</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-xs font-bold">2</div>
+            <p>Select "Open in browser"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- In-app browser warning (hidden by default) -->
+      <div id="inAppBrowserGuide" class="hidden rounded-lg border-2 border-blue-300 bg-blue-50 p-4 text-sm text-slate-800">
+        <div class="flex items-center gap-2 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <p class="font-bold text-base">In-App Browser Detected</p>
+        </div>
+        <p class="mb-2">Some in-app browsers block opening apps. For best results, open this link in Safari.</p>
       </div>
 
       <div class="flex flex-col items-center justify-center space-y-4">
@@ -32,17 +69,18 @@ const deepLink = createDeepLink(fullPath as any);
           Open in App
         </a>
         
-        <p class="text-sm text-slate-500">Tap the button above to open the app</p>
+        <p class="text-sm text-slate-500">Tap the button above to go ahead</p>
       </div>
       
       <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
         <p>If the app doesn't open, you may not have Outspire installed.</p>
         <p class="mt-2">
           <a 
-            href={APP_STORE_URL}
+            href={AFDIAN_URL}
             class="text-slate-900 font-medium underline underline-offset-4 hover:text-slate-700"
+            target="_blank"
           >
-            Download Outspire on the App Store
+            Download via TestFlight
           </a>
         </p>
       </div>
@@ -77,6 +115,13 @@ const deepLink = createDeepLink(fullPath as any);
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
   const isAndroid = /Android/.test(navigator.userAgent);
   const isMobile = isIOS || isAndroid;
+  const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+  const isInAppBrowser = isWeChat || 
+    /Line\//i.test(navigator.userAgent) || 
+    /FBAN|FBAV/i.test(navigator.userAgent) || 
+    /QQ\//i.test(navigator.userAgent) ||
+    /Instagram/i.test(navigator.userAgent) ||
+    /Weibo/i.test(navigator.userAgent);
   
   // Show appropriate help text based on platform
   document.addEventListener('DOMContentLoaded', () => {
@@ -84,6 +129,17 @@ const deepLink = createDeepLink(fullPath as any);
     const iosHelp = document.getElementById('iosHelp');
     const androidHelp = document.getElementById('androidHelp');
     const desktopHelp = document.getElementById('desktopHelp');
+    const wechatGuide = document.getElementById('wechatGuide');
+    const inAppBrowserGuide = document.getElementById('inAppBrowserGuide');
+    
+    // Show WeChat guide if in WeChat
+    if (isWeChat && wechatGuide) {
+      wechatGuide.classList.remove('hidden');
+    } 
+    // Show in-app browser guide if in another in-app browser
+    else if (isInAppBrowser && inAppBrowserGuide) {
+      inAppBrowserGuide.classList.remove('hidden');
+    }
     
     if (platformHelp) {
       platformHelp.classList.remove('hidden');
@@ -96,10 +152,5 @@ const deepLink = createDeepLink(fullPath as any);
         desktopHelp.classList.remove('hidden');
       }
     }
-    
-    // Add a fallback timer to show help after a delay
-    setTimeout(() => {
-      if (platformHelp) platformHelp.classList.remove('hidden');
-    }, 2000);
   });
 </script>
