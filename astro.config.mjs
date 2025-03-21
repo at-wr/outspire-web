@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import netlify from '@astrojs/netlify';
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,5 +10,11 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
   integrations: [react()],
-  output: 'server', // Change to server output mode to support dynamic routes
+  output: 'server',
+  adapter: netlify({
+    // Netlify adapter options if needed
+    // You can customize how the adapter works here
+    // For example:
+    // edgeMiddleware: true // for using Netlify Edge Functions
+  }),
 });

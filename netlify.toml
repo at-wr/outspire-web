@@ -1,0 +1,15 @@
+[build]
+  publish = "dist"
+  command = "pnpm run build"
+
+[[headers]]
+  for = "/.well-known/*"
+  [headers.values]
+    Content-Type = "application/json"
+    Access-Control-Allow-Origin = "*"
+
+# Redirect all routes to index.html for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/404"
+  status = 404
