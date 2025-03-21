@@ -1,4 +1,6 @@
 ---
+import MainLayout from '../layouts/MainLayout.astro';
+import { createUniversalLink } from '../lib/deeplink';
 import '../styles/global.css';
 // Component Imports
 import Button from '../components/Button.astro';
@@ -7,19 +9,175 @@ import Button from '../components/Button.astro';
 // https://docs.astro.build/basics/astro-components/
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro + TailwindCSS</title>
-	</head>
+<MainLayout title="Home">
+  <section class="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-white to-slate-50">
+    <div class="container mx-auto max-w-7xl px-4 md:px-6">
+      <div class="flex flex-col items-center gap-4 text-center">
+        <div class="space-y-2">
+          <h1 class="text-3xl font-bold tracking-tighter sm:text-5xl">Outspire</h1>
+          <p class="max-w-[700px] text-slate-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+            Your all-in-one WFLA campus companion. Experience your school life, simplified.
+          </p>
+        </div>
+        <div class="w-full max-w-sm space-y-2">
+          <div class="flex justify-center gap-2">
+            <a 
+              href="https://apps.apple.com/app/outspire/id0000000000" 
+              class="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-8 text-sm font-medium text-white shadow transition-colors hover:bg-slate-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950"
+            >
+              Download on the App Store
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="w-full py-12 md:py-24 lg:py-32 bg-white">
+    <div class="container mx-auto max-w-7xl px-4 md:px-6">
+      <div class="flex flex-col items-center justify-center space-y-4 text-center">
+        <div class="space-y-2">
+          <h2 class="text-3xl font-bold tracking-tighter md:text-4xl/tight">Features</h2>
+          <p class="max-w-[600px] text-slate-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+            Outspire brings your entire campus experience to your fingertips
+          </p>
+        </div>
+      </div>
+      <div class="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
+        <div class="flex flex-col items-center space-y-2 rounded-lg border border-slate-200 p-6 shadow-sm transition-all hover:shadow">
+          <div class="rounded-full border border-slate-200 p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="M3 9h18" />
+              <path d="M9 21V9" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold">Today View</h3>
+          <p class="text-sm text-slate-600 text-center">Get quick access to your upcoming classes and countdown timers.</p>
+        </div>
+        <div class="flex flex-col items-center space-y-2 rounded-lg border border-slate-200 p-6 shadow-sm transition-all hover:shadow">
+          <div class="rounded-full border border-slate-200 p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+              <line x1="8" x2="16" y1="12" y2="12" />
+              <line x1="12" x2="12" y1="8" y2="16" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold">Club Activities</h3>
+          <p class="text-sm text-slate-600 text-center">Manage your club memberships, activities, and CAS records.</p>
+        </div>
+        <div class="flex flex-col items-center space-y-2 rounded-lg border border-slate-200 p-6 shadow-sm transition-all hover:shadow">
+          <div class="rounded-full border border-slate-200 p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="M21 7H3" />
+              <path d="M7 3v18" />
+              <path d="M7 11h8" />
+              <path d="M15 11v8" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold">Class Table</h3>
+          <p class="text-sm text-slate-600 text-center">View your weekly class schedule with detailed information.</p>
+        </div>
+        <div class="flex flex-col items-center space-y-2 rounded-lg border border-slate-200 p-6 shadow-sm transition-all hover:shadow">
+          <div class="rounded-full border border-slate-200 p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c0 2 1 3 3 3h6c2 0 3-1 3-3v-5" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold">Academic Score</h3>
+          <p class="text-sm text-slate-600 text-center">Track your academic performance and grades.</p>
+        </div>
+        <div class="flex flex-col items-center space-y-2 rounded-lg border border-slate-200 p-6 shadow-sm transition-all hover:shadow">
+          <div class="rounded-full border border-slate-200 p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold">Weekly Arrangements</h3>
+          <p class="text-sm text-slate-600 text-center">Stay updated with the latest school arrangements and announcements.</p>
+        </div>
+        <div class="flex flex-col items-center space-y-2 rounded-lg border border-slate-200 p-6 shadow-sm transition-all hover:shadow">
+          <div class="rounded-full border border-slate-200 p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+              <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+              <path d="M7 2v20" />
+              <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold">Lunch Menus</h3>
+          <p class="text-sm text-slate-600 text-center">Check out what's for lunch today and the rest of the week.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="w-full py-12 md:py-24 lg:py-32 bg-slate-50">
+    <div class="container mx-auto max-w-7xl px-4 md:px-6">
+      <div class="flex flex-col items-center gap-6 text-center">
+        <div class="space-y-2">
+          <h2 class="text-3xl font-bold tracking-tighter md:text-4xl/tight">URL Scheme</h2>
+          <p class="max-w-[600px] text-slate-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+            Outspire supports URL schemes for deep linking into different parts of the app
+          </p>
+        </div>
+        <div class="w-full max-w-3xl space-y-4">
+          <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-xl font-bold mb-4 text-center">Supported URL Schemes</h3>
+            <div class="grid gap-6 md:grid-cols-2">
+              <div class="flex flex-col items-center space-y-2">
+                <h4 class="font-medium">Today View</h4>
+                <div class="flex items-center">
+                  <code class="rounded bg-slate-100 px-2 py-1 text-sm text-slate-800">
+                    <a href={createUniversalLink('today')} class="hover:underline">
+                      outspire://today
+                    </a>
+                  </code>
+                </div>
+              </div>
+              <div class="flex flex-col items-center space-y-2">
+                <h4 class="font-medium">Class Table</h4>
+                <div class="flex items-center">
+                  <code class="rounded bg-slate-100 px-2 py-1 text-sm text-slate-800">
+                    <a href={createUniversalLink('classtable')} class="hover:underline">
+                      outspire://classtable
+                    </a>
+                  </code>
+                </div>
+              </div>
+              <div class="flex flex-col items-center space-y-2">
+                <h4 class="font-medium">Club Information</h4>
+                <div class="flex items-center">
+                  <code class="rounded bg-slate-100 px-2 py-1 text-sm text-slate-800">
+                    <a href={createUniversalLink('club/89')} class="hover:underline">
+                      outspire://club/&lt;clubId&gt;
+                    </a>
+                  </code>
+                </div>
+              </div>
+              <div class="flex flex-col items-center space-y-2">
+                <h4 class="font-medium">Add Activity</h4>
+                <div class="flex items-center">
+                  <code class="rounded bg-slate-100 px-2 py-1 text-sm text-slate-800">
+                    <a href={createUniversalLink('addactivity/89')} class="hover:underline">
+                      outspire://addactivity/&lt;clubId&gt;
+                    </a>
+                  </code>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</MainLayout>
 
-	<body>
-		<div class="grid place-items-center h-screen content-center">
-			<Button>Tailwind Button in Astro!</Button>
-			<a href="/markdown-page" class="p-4 underline">Markdown is also supported...</a>
-		</div>
-	</body>
-</html>
+<style>
+  /* Add subtle animation for cards */
+  .hover\:shadow:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+</style>

@@ -1,0 +1,22 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "T2KTTT65L2.dev.wrye.Outspire",
+        "paths": [
+          "/app/*"
+        ],
+        "components": [
+          {
+            "/": "/app/*",
+            "comment": "All /app/ paths"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["T2KTTT65L2.dev.wrye.Outspire"]
+  }
+}

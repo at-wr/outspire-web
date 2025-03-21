@@ -1,0 +1,66 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { 
+  title, 
+  description = "Your all-in-one WFLA campus companion. An iOS app for WFLA TSIMS."
+} = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} - Outspire</title>
+    <meta name="description" content={description} />
+    
+    <!-- Apple-specific meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Outspire" />
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/og-image.png" />
+  </head>
+  <body class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
+    <div class="flex min-h-screen flex-col">
+      <header class="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 backdrop-blur-sm">
+        <div class="container mx-auto max-w-7xl flex h-16 items-center justify-between px-4 md:px-6">
+          <a href="/" class="flex items-center gap-2">
+            <img src="/icon.png" alt="Outspire" class="h-8 w-8" />
+            <span class="font-semibold text-xl">Outspire</span>
+          </a>
+          <nav class="flex items-center gap-6">
+            <a href="/" class="text-sm font-medium transition-colors hover:text-slate-900/70">Home</a>
+            <a href="https://github.com/at-wr/Outspire" class="text-sm font-medium transition-colors hover:text-slate-900/70" target="_blank">GitHub</a>
+          </nav>
+        </div>
+      </header>
+      <main class="flex-1">
+        <slot />
+      </main>
+      <footer class="border-t border-slate-200 bg-white py-6">
+        <div class="container mx-auto max-w-7xl flex flex-col items-center justify-center gap-4 px-4 md:px-6">
+          <div class="flex items-center gap-2">
+            <img src="/icon.png" alt="Outspire" class="h-6 w-6" />
+            <span class="text-sm font-medium">Outspire</span>
+          </div>
+          <p class="text-center text-sm text-slate-500">
+            © 2023-2024 Outspire. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
