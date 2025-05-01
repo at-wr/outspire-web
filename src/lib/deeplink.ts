@@ -1,4 +1,4 @@
-export const APP_STORE_URL = 'https://apps.apple.com/app/outspire/id0000000000';
+export const APP_STORE_URL = 'https://apps.apple.com/us/app/outspire/id6743143348';
 export const AFDIAN_URL = 'https://afdian.com/item/8ea3c1a8062011f0b76c52540025c377';
 export const APP_SCHEME = 'outspire://';
 
